@@ -1,0 +1,422 @@
+﻿@page "/"
+@using Soenneker.Quark.Validations.Demo.Components
+@using Soenneker.Quark.Validations.Dtos
+
+<PageTitle>Quark Validations Demo</PageTitle>
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h1>Quark Validations Demo</h1>
+            <p class="lead">Comprehensive demonstration of Quark validation components with different validation types and scenarios.</p>
+        </div>
+    </div>
+
+    <!-- Data Annotation Validation Demo -->
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Data Annotation Validation</h5>
+                    <small class="text-muted">Uses System.ComponentModel.DataAnnotations</small>
+                </div>
+                <div class="card-body">
+                    <Validations @ref="_dataAnnotationForm" Model="_dataAnnotationModel">
+                        <div class="mb-3">
+                            <label class="form-label">Email Address *</label>
+                            <Validation @ref="_emailValidation">
+                                <ValidationInput @bind-Value="_dataAnnotationModel.Email" 
+                                               Placeholder="Enter your email" 
+                                               Required="true" />
+                            </Validation>
+                            <div class="invalid-feedback d-block">
+                                @foreach (string message in _emailValidation?.Messages ?? Enumerable.Empty<string>())
+                                {
+                                    <div>@message</div>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Age *</label>
+                            <Validation @ref="_ageValidation">
+                                <ValidationInput @bind-Value="_dataAnnotationModel.Age" 
+                                               Placeholder="Enter your age" 
+                                               Required="true" />
+                            </Validation>
+                            <div class="invalid-feedback d-block">
+                                @foreach (string message in _ageValidation?.Messages ?? Enumerable.Empty<string>())
+                                {
+                                    <div>@message</div>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Phone Number</label>
+                            <Validation @ref="_phoneValidation">
+                                <ValidationInput @bind-Value="_dataAnnotationModel.PhoneNumber" 
+                                               Placeholder="(555) 123-4567" />
+                            </Validation>
+                            <div class="invalid-feedback d-block">
+                                @foreach (string message in _phoneValidation?.Messages ?? Enumerable.Empty<string>())
+                                {
+                                    <div>@message</div>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-primary" @onclick="ValidateDataAnnotations">Validate All</button>
+                            <button class="btn btn-secondary" @onclick="ClearDataAnnotations">Clear</button>
+                        </div>
+                    </Validations>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pattern Validation Demo -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Pattern Validation</h5>
+                    <small class="text-muted">Uses Regular Expression patterns</small>
+                </div>
+                <div class="card-body">
+                    <Validations @ref="_patternForm">
+                        <div class="mb-3">
+                            <label class="form-label">Password (min 8 chars, 1 uppercase, 1 lowercase, 1 number)</label>
+                            <Validation @ref="_passwordValidation" UsePattern="true">
+                                <ValidationInput @bind-Value="_patternModel.Password" 
+                                               Placeholder="Enter password" 
+                                               Type="password" />
+                            </Validation>
+                            <div class="invalid-feedback d-block">
+                                @foreach (string message in _passwordValidation?.Messages ?? Enumerable.Empty<string>())
+                                {
+                                    <div>@message</div>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">US Zip Code (12345 or 12345-6789)</label>
+                            <Validation @ref="_zipValidation" UsePattern="true">
+                                <ValidationInput @bind-Value="_patternModel.ZipCode" 
+                                               Placeholder="12345 or 12345-6789" />
+                            </Validation>
+                            <div class="invalid-feedback d-block">
+                                @foreach (string message in _zipValidation?.Messages ?? Enumerable.Empty<string>())
+                                {
+                                    <div>@message</div>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Credit Card Number (16 digits)</label>
+                            <Validation @ref="_cardValidation" UsePattern="true">
+                                <ValidationInput @bind-Value="_patternModel.CreditCard" 
+                                               Placeholder="1234567890123456" />
+                            </Validation>
+                            <div class="invalid-feedback d-block">
+                                @foreach (string message in _cardValidation?.Messages ?? Enumerable.Empty<string>())
+                                {
+                                    <div>@message</div>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-primary" @onclick="ValidatePatterns">Validate All</button>
+                            <button class="btn btn-secondary" @onclick="ClearPatterns">Clear</button>
+                        </div>
+                    </Validations>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Validator Demo -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Custom Validator</h5>
+                    <small class="text-muted">Uses custom validation logic</small>
+                </div>
+                <div class="card-body">
+                    <Validations @ref="_customForm">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Username (must be unique)</label>
+                                    <Validation @ref="_usernameValidation" Validator="@ValidateUsername">
+                                        <ValidationInput @bind-Value="_customModel.Username" 
+                                                       Placeholder="Enter username" />
+                                    </Validation>
+                                    <div class="invalid-feedback d-block">
+                                        @foreach (string message in _usernameValidation?.Messages ?? Enumerable.Empty<string>())
+                                        {
+                                            <div>@message</div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Confirm Username</label>
+                                    <Validation @ref="_confirmUsernameValidation" Validator="@ValidateConfirmUsername">
+                                        <ValidationInput @bind-Value="_customModel.ConfirmUsername" 
+                                                       Placeholder="Confirm username" />
+                                    </Validation>
+                                    <div class="invalid-feedback d-block">
+                                        @foreach (string message in _confirmUsernameValidation?.Messages ?? Enumerable.Empty<string>())
+                                        {
+                                            <div>@message</div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-primary" @onclick="ValidateCustom">Validate All</button>
+                            <button class="btn btn-secondary" @onclick="ClearCustom">Clear</button>
+                        </div>
+                    </Validations>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Validation Status Display -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Validation Status</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <h6>Data Annotation Form</h6>
+                            <div class="alert @GetStatusClass(_dataAnnotationForm?.AllValidationsSuccessful ?? false)">
+                                @GetStatusText(_dataAnnotationForm?.AllValidationsSuccessful ?? false)
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <h6>Pattern Form</h6>
+                            <div class="alert @GetStatusClass(_patternForm?.AllValidationsSuccessful ?? false)">
+                                @GetStatusText(_patternForm?.AllValidationsSuccessful ?? false)
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <h6>Custom Form</h6>
+                            <div class="alert @GetStatusClass(_customForm?.AllValidationsSuccessful ?? false)">
+                                @GetStatusText(_customForm?.AllValidationsSuccessful ?? false)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    // Form references
+    private Validations? _dataAnnotationForm;
+    private Validations? _patternForm;
+    private Validations? _customForm;
+
+    // Validation references
+    private Validation? _emailValidation;
+    private Validation? _ageValidation;
+    private Validation? _phoneValidation;
+    private Validation? _passwordValidation;
+    private Validation? _zipValidation;
+    private Validation? _cardValidation;
+    private Validation? _usernameValidation;
+    private Validation? _confirmUsernameValidation;
+
+    // Models
+    private DataAnnotationModel _dataAnnotationModel = new();
+    private PatternModel _patternModel = new();
+    private CustomModel _customModel = new();
+
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            // Initialize data annotation validations
+            if (_emailValidation is not null)
+            {
+                await _emailValidation.InitializeInputExpression(() => _dataAnnotationModel.Email);
+            }
+            if (_ageValidation is not null)
+            {
+                await _ageValidation.InitializeInputExpression(() => _dataAnnotationModel.Age);
+            }
+            if (_phoneValidation is not null)
+            {
+                await _phoneValidation.InitializeInputExpression(() => _dataAnnotationModel.PhoneNumber);
+            }
+
+            // Initialize pattern validations
+            if (_passwordValidation is not null)
+            {
+                await _passwordValidation.InitializeInputPattern(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d@$!%*?&]{8,}$", _patternModel.Password);
+            }
+            if (_zipValidation is not null)
+            {
+                await _zipValidation.InitializeInputPattern(@"^\d{5}(-\d{4})?$", _patternModel.ZipCode);
+            }
+            if (_cardValidation is not null)
+            {
+                await _cardValidation.InitializeInputPattern(@"^\d{16}$", _patternModel.CreditCard);
+            }
+
+            // Custom validators are set via component parameters in the markup
+        }
+    }
+
+    private async Task ValidateDataAnnotations()
+    {
+        if (_dataAnnotationForm is not null)
+        {
+            bool result = await _dataAnnotationForm.ValidateAll();
+            StateHasChanged();
+        }
+    }
+
+    private async Task ValidatePatterns()
+    {
+        if (_patternForm is not null)
+        {
+            bool result = await _patternForm.ValidateAll();
+            StateHasChanged();
+        }
+    }
+
+    private async Task ValidateCustom()
+    {
+        if (_customForm is not null)
+        {
+            bool result = await _customForm.ValidateAll();
+            StateHasChanged();
+        }
+    }
+
+    private async Task ClearDataAnnotations()
+    {
+        if (_dataAnnotationForm is not null)
+        {
+            await _dataAnnotationForm.ClearAll();
+            StateHasChanged();
+        }
+    }
+
+    private async Task ClearPatterns()
+    {
+        if (_patternForm is not null)
+        {
+            await _patternForm.ClearAll();
+            StateHasChanged();
+        }
+    }
+
+    private async Task ClearCustom()
+    {
+        if (_customForm is not null)
+        {
+            await _customForm.ClearAll();
+            StateHasChanged();
+        }
+    }
+
+    private void ValidateUsername(ValidatorEventArgs args)
+    {
+        var username = args.Value?.ToString();
+        
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            args.Messages?.Invoke(new[] { "Username is required." });
+            return;
+        }
+
+        if (username.Length < 3)
+        {
+            args.Messages?.Invoke(new[] { "Username must be at least 3 characters long." });
+            return;
+        }
+
+        // Simulate checking if username is taken
+        var takenUsernames = new[] { "admin", "user", "test", "demo" };
+        if (takenUsernames.Contains(username.ToLower()))
+        {
+            args.Messages?.Invoke(new[] { "This username is already taken." });
+            return;
+        }
+
+        args.Succeeded?.Invoke();
+    }
+
+    private void ValidateConfirmUsername(ValidatorEventArgs args)
+    {
+        var confirmUsername = args.Value?.ToString();
+        
+        if (string.IsNullOrWhiteSpace(confirmUsername))
+        {
+            args.Messages?.Invoke(new[] { "Please confirm your username." });
+            return;
+        }
+
+        if (confirmUsername != _customModel.Username)
+        {
+            args.Messages?.Invoke(new[] { "Username confirmation does not match." });
+            return;
+        }
+
+        args.Succeeded?.Invoke();
+    }
+
+    private string GetStatusClass(bool isValid)
+    {
+        return isValid ? "alert-success" : "alert-danger";
+    }
+
+    private string GetStatusText(bool isValid)
+    {
+        return isValid ? "✓ All validations passed" : "✗ Some validations failed";
+    }
+
+    // Model classes
+    public sealed class DataAnnotationModel
+    {
+        [System.ComponentModel.DataAnnotations.Required(ErrorMessage = "Email address is required.")]
+        [System.ComponentModel.DataAnnotations.EmailAddress(ErrorMessage = "Please enter a valid email address.")]
+        public string? Email { get; set; }
+
+        [System.ComponentModel.DataAnnotations.Required(ErrorMessage = "Age is required.")]
+        [System.ComponentModel.DataAnnotations.Range(1, 120, ErrorMessage = "Age must be between 1 and 120.")]
+        public string? Age { get; set; }
+
+        [System.ComponentModel.DataAnnotations.Phone(ErrorMessage = "Please enter a valid phone number.")]
+        public string? PhoneNumber { get; set; }
+    }
+
+    public sealed class PatternModel
+    {
+        public string? Password { get; set; }
+        public string? ZipCode { get; set; }
+        public string? CreditCard { get; set; }
+    }
+
+    public sealed class CustomModel
+    {
+        public string? Username { get; set; }
+        public string? ConfirmUsername { get; set; }
+    }
+}

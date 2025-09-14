@@ -1,0 +1,44 @@
+@using Soenneker.Quark.TextEdits
+@using Soenneker.Quark.Validations.Abstract
+@using Soenneker.Quark.Validations.Enums
+@inherits Soenneker.Quark.TextEdits.TextEdit
+
+@code {
+    [CascadingParameter] public Validation? ParentValidation { get; set; }
+    
+    public object? ValidationValue => Value;
+    
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        
+        // Apply validation styling
+        if (ParentValidation?.Status == ValidationStatus.Error)
+        {
+            Class = AppendToClass(Class, "is-invalid");
+        }
+        else if (ParentValidation?.Status == ValidationStatus.Success)
+        {
+            Class = AppendToClass(Class, "is-valid");
+        }
+        
+        // Set up two-way binding if not already set
+        if (!ValueChanged.HasDelegate)
+        {
+            ValueChanged = EventCallback.Factory.Create<string>(this, async (value) =>
+            {
+                Value = value;
+                await InvokeAsync(StateHasChanged);
+            });
+        }
+    }
+
+    private new string AppendToClass(string? existing, string? newClass)
+    {
+        if (string.IsNullOrEmpty(existing))
+            return newClass ?? string.Empty;
+        if (string.IsNullOrEmpty(newClass))
+            return existing;
+        return $"{existing} {newClass}";
+    }
+}

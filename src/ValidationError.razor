@@ -1,0 +1,26 @@
+@using Soenneker.Quark.Divs
+@using Soenneker.Quark.Validations.Enums
+
+@if (ParentValidation?.Status == ValidationStatus.Error && ParentValidation.Messages?.Any() == true)
+{
+    <Div class="invalid-feedback d-block">
+        @foreach (string message in ParentValidation.Messages)
+        {
+            <Div>@message</Div>
+        }
+    </Div>
+}
+else if (ParentValidation?.Status == ValidationStatus.Success && !string.IsNullOrEmpty(SuccessMessage))
+{
+    <Div class="valid-feedback">
+        @SuccessMessage
+    </Div>
+}
+
+@code {
+    [CascadingParameter]
+    public Validation? ParentValidation { get; set; }
+
+    [Parameter]
+    public string? SuccessMessage { get; set; }
+}
