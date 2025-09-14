@@ -1,7 +1,5 @@
-@using Soenneker.Quark.TextEdits
-@using Soenneker.Quark.Validations.Abstract
-@using Soenneker.Quark.Validations.Enums
 @inherits Soenneker.Quark.TextEdits.TextEdit
+@implements IValidationInput
 
 @code {
     [CascadingParameter] public Validation? ParentValidation { get; set; }
@@ -29,8 +27,22 @@
             {
                 Value = value;
                 await InvokeAsync(StateHasChanged);
+                
+                if (ParentValidation is not null)
+                {
+                    await ParentValidation.NotifyInputChanged(value);
+                }
             });
         }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && ParentValidation is not null)
+        {
+            await ParentValidation.InitializeInput(this);
+        }
+        await base.OnAfterRenderAsync(firstRender);
     }
 
     private new string AppendToClass(string? existing, string? newClass)

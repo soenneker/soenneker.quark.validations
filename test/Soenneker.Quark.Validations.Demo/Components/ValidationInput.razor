@@ -1,17 +1,18 @@
-@using Soenneker.Quark.Validations.Abstract
-@using Soenneker.Quark.Validations.Enums
 @using Soenneker.Quark.Enums.Colors
 @using Soenneker.Quark.Enums.Size
 
 <input type="@Type"
        @bind="Value"
        @bind:event="oninput"
+       @bind:after="OnValueChanged"
        placeholder="@Placeholder"
        disabled="@Disabled"
        readonly="@ReadOnly"
        required="@Required"
-       maxlength="@MaxLength"
+       maxlength="@(MaxLength > 0 ? MaxLength : null)"
        class="@GetInputClass()" />
+
+@implements IValidationInput
 
 @code {
 
@@ -49,6 +50,25 @@
 	public Size Size { get; set; } = Size.Default;
 
 	public object? ValidationValue => Value;
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (firstRender && ParentValidation is not null)
+		{
+			await ParentValidation.InitializeInput(this);
+		}
+		await base.OnAfterRenderAsync(firstRender);
+	}
+
+	private async Task OnValueChanged()
+	{
+		await ValueChanged.InvokeAsync(Value);
+		
+		if (ParentValidation is not null)
+		{
+			await ParentValidation.NotifyInputChanged(Value);
+		}
+	}
 
 	private string GetInputClass()
 	{

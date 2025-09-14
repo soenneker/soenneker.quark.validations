@@ -1,0 +1,228 @@
+@using Soenneker.Quark.Validations.Dtos
+@using Soenneker.Quark.Validations.Enums
+@using Soenneker.Quark.Validations.Rules.Base
+
+<div class="custom-validation-example">
+    <h3>Custom Validation Rule Example</h3>
+    <p>This example shows how to create custom validation rules using the BaseValidationRule class.</p>
+    
+    <div class="form-group">
+        <label for="phone">Phone Number (Custom Format):</label>
+        <input type="tel" id="phone" @bind="phoneValue" @oninput="OnPhoneInput" />
+        @if (phoneValidationStatus == ValidationStatus.Error)
+        {
+            <div class="error-message">@phoneErrorMessage</div>
+        }
+        else if (phoneValidationStatus == ValidationStatus.Success)
+        {
+            <div class="success-message">Phone number is valid!</div>
+        }
+    </div>
+
+    <div class="form-group">
+        <label for="password">Password (Custom Strength):</label>
+        <input type="password" id="password" @bind="passwordValue" @oninput="OnPasswordInput" />
+        @if (passwordValidationStatus == ValidationStatus.Error)
+        {
+            <div class="error-message">@passwordErrorMessage</div>
+        }
+        else if (passwordValidationStatus == ValidationStatus.Success)
+        {
+            <div class="success-message">Password is strong!</div>
+        }
+    </div>
+
+    <div class="form-group">
+        <button @onclick="ValidateAll" disabled="@(phoneValidationStatus != ValidationStatus.Success || passwordValidationStatus != ValidationStatus.Success)">
+            Submit
+        </button>
+    </div>
+</div>
+
+@code {
+    private string phoneValue = string.Empty;
+    private string passwordValue = string.Empty;
+    
+    private ValidationStatus phoneValidationStatus = ValidationStatus.None;
+    private ValidationStatus passwordValidationStatus = ValidationStatus.None;
+    
+    private string phoneErrorMessage = string.Empty;
+    private string passwordErrorMessage = string.Empty;
+
+    // Custom validation rules
+    private readonly PhoneNumberRule phoneRule = new();
+    private readonly StrongPasswordRule passwordRule = new();
+
+    private void OnPhoneInput(ChangeEventArgs e)
+    {
+        phoneValue = e.Value?.ToString() ?? string.Empty;
+        ValidatePhone();
+    }
+
+    private void OnPasswordInput(ChangeEventArgs e)
+    {
+        passwordValue = e.Value?.ToString() ?? string.Empty;
+        ValidatePassword();
+    }
+
+    private void ValidatePhone()
+    {
+        var args = new ValidatorEventArgs(phoneValue);
+        phoneRule.Validate(args, "Please enter a valid phone number (e.g., (555) 123-4567)");
+        
+        phoneValidationStatus = args.Status;
+        phoneErrorMessage = args.Status == ValidationStatus.Error ? args.ErrorText ?? string.Empty : string.Empty;
+    }
+
+    private void ValidatePassword()
+    {
+        var args = new ValidatorEventArgs(passwordValue);
+        passwordRule.Validate(args, "Password must be at least 8 characters with uppercase, lowercase, number, and special character");
+        
+        passwordValidationStatus = args.Status;
+        passwordErrorMessage = args.Status == ValidationStatus.Error ? args.ErrorText ?? string.Empty : string.Empty;
+    }
+
+    private void ValidateAll()
+    {
+        ValidatePhone();
+        ValidatePassword();
+    }
+}
+
+<style>
+    .custom-validation-example {
+        max-width: 600px;
+        margin: 20px;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background-color: #f9f9f9;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+
+    .form-group input:focus {
+        outline: none;
+        border-color: #007bff;
+        box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+    }
+
+    .error-message {
+        color: #dc3545;
+        font-size: 12px;
+        margin-top: 5px;
+        font-weight: 500;
+    }
+
+    .success-message {
+        color: #28a745;
+        font-size: 12px;
+        margin-top: 5px;
+        font-weight: 500;
+    }
+
+    button {
+        background-color: #007bff;
+        color: white;
+        padding: 12px 24px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 500;
+    }
+
+    button:disabled {
+        background-color: #6c757d;
+        cursor: not-allowed;
+    }
+
+    button:hover:not(:disabled) {
+        background-color: #0056b3;
+    }
+
+    h3 {
+        color: #333;
+        margin-bottom: 10px;
+    }
+
+    p {
+        color: #666;
+        margin-bottom: 20px;
+        font-style: italic;
+    }
+</style>
+
+@* Custom validation rule implementations *@
+@code {
+    /// <summary>
+    /// Custom validation rule for phone number format.
+    /// </summary>
+    public class PhoneNumberRule : BaseValidationRule
+    {
+        protected override string DefaultErrorMessage => "Please enter a valid phone number (e.g., (555) 123-4567)";
+
+        protected override bool IsValidValue(object? value)
+        {
+            if (value == null) return true; // Null values are valid for phone rule
+            
+            var stringValue = value.ToString();
+            if (string.IsNullOrWhiteSpace(stringValue)) return true; // Empty values are valid for phone rule
+            
+            // Simple phone number validation: (XXX) XXX-XXXX or XXX-XXX-XXXX
+            var phoneRegex = new System.Text.RegularExpressions.Regex(@"^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$");
+            return phoneRegex.IsMatch(stringValue);
+        }
+    }
+
+    /// <summary>
+    /// Custom validation rule for strong password requirements.
+    /// </summary>
+    public class StrongPasswordRule : BaseValidationRule
+    {
+        protected override string DefaultErrorMessage => "Password must be at least 8 characters with uppercase, lowercase, number, and special character";
+
+        protected override bool IsValidValue(object? value)
+        {
+            if (value == null) return true; // Null values are valid for password rule
+            
+            var stringValue = value.ToString();
+            if (string.IsNullOrWhiteSpace(stringValue)) return true; // Empty values are valid for password rule
+            
+            // Check minimum length
+            if (stringValue.Length < 8) return false;
+            
+            // Check for uppercase letter
+            if (!stringValue.Any(char.IsUpper)) return false;
+            
+            // Check for lowercase letter
+            if (!stringValue.Any(char.IsLower)) return false;
+            
+            // Check for digit
+            if (!stringValue.Any(char.IsDigit)) return false;
+            
+            // Check for special character
+            if (!stringValue.Any(c => !char.IsLetterOrDigit(c))) return false;
+            
+            return true;
+        }
+    }
+}

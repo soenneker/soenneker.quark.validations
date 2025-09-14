@@ -1,10 +1,11 @@
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components.Forms;
+using Soenneker.Quark.Validations.Abstract;
 using Soenneker.Quark.Validations.Enums;
+using ValidationResult = System.ComponentModel.DataAnnotations.ValidationResult;
 
 namespace Soenneker.Quark.Validations.Handlers;
 
@@ -19,15 +20,24 @@ internal sealed class DataAnnotationValidationHandler : IValidationHandler
             FieldIdentifier field = ctx.FieldIdentifier;
             store.Clear(field);
 
-            var results = new List<System.ComponentModel.DataAnnotations.ValidationResult>();
-            var validationContext = new System.ComponentModel.DataAnnotations.ValidationContext(field.Model);
+            var results = new List<ValidationResult>();
+            var validationContext = new System.ComponentModel.DataAnnotations.ValidationContext(field.Model)
+            {
+                MemberName = field.FieldName
+            };
+
+            object? propertyValue = field.Model?.GetType().GetProperty(field.FieldName)?.GetValue(field.Model);
             System.ComponentModel.DataAnnotations.Validator.TryValidateProperty(
-                field.Model?.GetType().GetProperty(field.FieldName)?.GetValue(field.Model),
+                propertyValue,
                 validationContext,
                 results);
 
             foreach (ValidationResult r in results)
-                messages.Add(r.ErrorMessage ?? "Invalid");
+            {
+                string message = r.ErrorMessage ?? "Invalid";
+                messages.Add(message);
+                store.Add(field, message);
+            }
 
             if (messages.Any())
                 ctx.NotifyValidationStatusChanged(ValidationStatus.Error, messages);

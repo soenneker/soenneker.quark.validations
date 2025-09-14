@@ -1,6 +1,7 @@
 ﻿@page "/"
 @using Soenneker.Quark.Validations.Demo.Components
 @using Soenneker.Quark.Validations.Dtos
+@using Soenneker.Extensions.String
 
 <PageTitle>Quark Validations Demo</PageTitle>
 
@@ -241,9 +242,9 @@
     private Validation? _confirmUsernameValidation;
 
     // Models
-    private DataAnnotationModel _dataAnnotationModel = new();
-    private PatternModel _patternModel = new();
-    private CustomModel _customModel = new();
+    private readonly DataAnnotationModel _dataAnnotationModel = new();
+    private readonly PatternModel _patternModel = new();
+    private readonly CustomModel _customModel = new();
 
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -340,15 +341,17 @@
     {
         var username = args.Value?.ToString();
         
-        if (string.IsNullOrWhiteSpace(username))
+        if (username.IsNullOrWhiteSpace())
         {
-            args.Messages?.Invoke(new[] { "Username is required." });
+            args.Status = ValidationStatus.Error;
+            args.ErrorText = "Username is required.";
             return;
         }
 
         if (username.Length < 3)
         {
-            args.Messages?.Invoke(new[] { "Username must be at least 3 characters long." });
+            args.Status = ValidationStatus.Error;
+            args.ErrorText = "Username must be at least 3 characters long.";
             return;
         }
 
@@ -356,11 +359,12 @@
         var takenUsernames = new[] { "admin", "user", "test", "demo" };
         if (takenUsernames.Contains(username.ToLower()))
         {
-            args.Messages?.Invoke(new[] { "This username is already taken." });
+            args.Status = ValidationStatus.Error;
+            args.ErrorText = "This username is already taken.";
             return;
         }
 
-        args.Succeeded?.Invoke();
+        args.Status = ValidationStatus.Success;
     }
 
     private void ValidateConfirmUsername(ValidatorEventArgs args)
@@ -369,17 +373,19 @@
         
         if (string.IsNullOrWhiteSpace(confirmUsername))
         {
-            args.Messages?.Invoke(new[] { "Please confirm your username." });
+            args.Status = ValidationStatus.Error;
+            args.ErrorText = "Please confirm your username.";
             return;
         }
 
         if (confirmUsername != _customModel.Username)
         {
-            args.Messages?.Invoke(new[] { "Username confirmation does not match." });
+            args.Status = ValidationStatus.Error;
+            args.ErrorText = "Username confirmation does not match.";
             return;
         }
 
-        args.Succeeded?.Invoke();
+        args.Status = ValidationStatus.Success;
     }
 
     private string GetStatusClass(bool isValid)

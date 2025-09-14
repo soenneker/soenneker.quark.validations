@@ -4,12 +4,16 @@
 
 @implements IDisposable
 
-@if (_visible && _status == ValidationStatus.Error && (_messages?.Any() ?? false))
+@if (_visible && _status == ValidationStatus.Success)
 {
-    <Div class="@($"alert alert-danger {Class}")">
-        @foreach (string message in _messages!)
+    <Div class="@($"alert alert-success {Class}")">
+        @if (ChildContent is not null)
         {
-            <Div>@message</Div>
+            @ChildContent
+        }
+        else if (!string.IsNullOrEmpty(SuccessText))
+        {
+            @SuccessText
         }
     </Div>
 }
@@ -19,11 +23,16 @@
     public Validations? ParentValidations { get; set; }
 
     [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    [Parameter]
+    public string? SuccessText { get; set; }
+
+    [Parameter]
     public string? Class { get; set; }
 
     private bool _visible;
     private ValidationStatus _status;
-    private IReadOnlyCollection<string>? _messages;
 
     protected override void OnInitialized()
     {
@@ -37,7 +46,6 @@
     private void OnStatusChanged(ValidationsStatusChangedEventArgs args)
     {
         _status = args.Status;
-        _messages = args.Messages;
         _visible = args.Status != ValidationStatus.None;
         InvokeAsync(StateHasChanged);
     }
@@ -46,7 +54,6 @@
     {
         _visible = false;
         _status = ValidationStatus.None;
-        _messages = null;
         InvokeAsync(StateHasChanged);
     }
 
@@ -59,3 +66,5 @@
         }
     }
 }
+
+

@@ -1,5 +1,6 @@
 using System.Threading;
 using System.Threading.Tasks;
+using Soenneker.Quark.Validations.Abstract;
 using Soenneker.Quark.Validations.Enums;
 
 namespace Soenneker.Quark.Validations;

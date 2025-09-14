@@ -1,0 +1,310 @@
+@using Soenneker.Quark.Validations.Rules
+@using Soenneker.Quark.Validations.Dtos
+@using Soenneker.Quark.Validations.Enums
+
+<div class="validation-rules-example">
+    <h3>New Validation Rules Example</h3>
+    <p>This example shows how to use the new separated validation rules instead of built-in properties.</p>
+    
+    <div class="form-group">
+        <label for="email">Email Address:</label>
+        <input type="email" id="email" @bind="emailValue" @oninput="OnEmailInput" />
+        @if (emailValidationStatus == ValidationStatus.Error)
+        {
+            <div class="error-message">@emailErrorMessage</div>
+        }
+        else if (emailValidationStatus == ValidationStatus.Success)
+        {
+            <div class="success-message">Email is valid!</div>
+        }
+    </div>
+
+    <div class="form-group">
+        <label for="username">Username (Required, Min 3 chars, Max 20 chars, Alphanumeric):</label>
+        <input type="text" id="username" @bind="usernameValue" @oninput="OnUsernameInput" />
+        @if (usernameValidationStatus == ValidationStatus.Error)
+        {
+            <div class="error-message">@usernameErrorMessage</div>
+        }
+        else if (usernameValidationStatus == ValidationStatus.Success)
+        {
+            <div class="success-message">Username is valid!</div>
+        }
+    </div>
+
+    <div class="form-group">
+        <label for="age">Age (Required, Min 18, Max 120):</label>
+        <input type="number" id="age" @bind="ageValue" @oninput="OnAgeInput" />
+        @if (ageValidationStatus == ValidationStatus.Error)
+        {
+            <div class="error-message">@ageErrorMessage</div>
+        }
+        else if (ageValidationStatus == ValidationStatus.Success)
+        {
+            <div class="success-message">Age is valid!</div>
+        }
+    </div>
+
+    <div class="form-group">
+        <label for="website">Website URL (Optional):</label>
+        <input type="url" id="website" @bind="websiteValue" @oninput="OnWebsiteInput" />
+        @if (websiteValidationStatus == ValidationStatus.Error)
+        {
+            <div class="error-message">@websiteErrorMessage</div>
+        }
+        else if (websiteValidationStatus == ValidationStatus.Success)
+        {
+            <div class="success-message">Website URL is valid!</div>
+        }
+    </div>
+
+    <div class="form-group">
+        <button @onclick="ValidateAll" disabled="@(emailValidationStatus != ValidationStatus.Success || usernameValidationStatus != ValidationStatus.Success || ageValidationStatus != ValidationStatus.Success)">
+            Submit
+        </button>
+    </div>
+</div>
+
+@code {
+    private string emailValue = string.Empty;
+    private string usernameValue = string.Empty;
+    private string ageValue = string.Empty;
+    private string websiteValue = string.Empty;
+    
+    private ValidationStatus emailValidationStatus = ValidationStatus.None;
+    private ValidationStatus usernameValidationStatus = ValidationStatus.None;
+    private ValidationStatus ageValidationStatus = ValidationStatus.None;
+    private ValidationStatus websiteValidationStatus = ValidationStatus.None;
+    
+    private string emailErrorMessage = string.Empty;
+    private string usernameErrorMessage = string.Empty;
+    private string ageErrorMessage = string.Empty;
+    private string websiteErrorMessage = string.Empty;
+
+    private void OnEmailInput(ChangeEventArgs e)
+    {
+        emailValue = e.Value?.ToString() ?? string.Empty;
+        ValidateEmail();
+    }
+
+    private void OnUsernameInput(ChangeEventArgs e)
+    {
+        usernameValue = e.Value?.ToString() ?? string.Empty;
+        ValidateUsername();
+    }
+
+    private void OnAgeInput(ChangeEventArgs e)
+    {
+        ageValue = e.Value?.ToString() ?? string.Empty;
+        ValidateAge();
+    }
+
+    private void OnWebsiteInput(ChangeEventArgs e)
+    {
+        websiteValue = e.Value?.ToString() ?? string.Empty;
+        ValidateWebsite();
+    }
+
+    private void ValidateEmail()
+    {
+        var args = new ValidatorEventArgs(emailValue);
+        ValidationRules.IsEmail.Validate(args, "Please enter a valid email address.");
+        
+        emailValidationStatus = args.Status;
+        emailErrorMessage = args.Status == ValidationStatus.Error ? args.ErrorText ?? string.Empty : string.Empty;
+    }
+
+    private void ValidateUsername()
+    {
+        var args = new ValidatorEventArgs(usernameValue);
+        
+        // Check if empty first
+        ValidationRules.NotEmpty.Validate(args, "Username is required.");
+        if (args.Status == ValidationStatus.Error)
+        {
+            usernameValidationStatus = args.Status;
+            usernameErrorMessage = args.ErrorText ?? string.Empty;
+            return;
+        }
+
+        // Check minimum length
+        ValidationRules.MinLength.Validate(args, 3, "Username must be at least 3 characters long.");
+        if (args.Status == ValidationStatus.Error)
+        {
+            usernameValidationStatus = args.Status;
+            usernameErrorMessage = args.ErrorText ?? string.Empty;
+            return;
+        }
+
+        // Check maximum length
+        ValidationRules.MaxLength.Validate(args, 20, "Username must be no more than 20 characters long.");
+        if (args.Status == ValidationStatus.Error)
+        {
+            usernameValidationStatus = args.Status;
+            usernameErrorMessage = args.ErrorText ?? string.Empty;
+            return;
+        }
+
+        // Check alphanumeric
+        ValidationRules.Alphanumeric.Validate(args, "Username can only contain letters and numbers.");
+        if (args.Status == ValidationStatus.Error)
+        {
+            usernameValidationStatus = args.Status;
+            usernameErrorMessage = args.ErrorText ?? string.Empty;
+            return;
+        }
+
+        usernameValidationStatus = ValidationStatus.Success;
+        usernameErrorMessage = string.Empty;
+    }
+
+    private void ValidateAge()
+    {
+        var args = new ValidatorEventArgs(ageValue);
+        
+        // Check if empty first
+        ValidationRules.NotEmpty.Validate(args, "Age is required.");
+        if (args.Status == ValidationStatus.Error)
+        {
+            ageValidationStatus = args.Status;
+            ageErrorMessage = args.ErrorText ?? string.Empty;
+            return;
+        }
+
+        // Check if numeric
+        ValidationRules.IsInteger.Validate(args, "Please enter a valid age.");
+        if (args.Status == ValidationStatus.Error)
+        {
+            ageValidationStatus = args.Status;
+            ageErrorMessage = args.ErrorText ?? string.Empty;
+            return;
+        }
+
+        // Check minimum value
+        ValidationRules.MinValue.Validate(args, 18, "You must be at least 18 years old.");
+        if (args.Status == ValidationStatus.Error)
+        {
+            ageValidationStatus = args.Status;
+            ageErrorMessage = args.ErrorText ?? string.Empty;
+            return;
+        }
+
+        // Check maximum value
+        ValidationRules.MaxValue.Validate(args, 120, "Please enter a realistic age.");
+        if (args.Status == ValidationStatus.Error)
+        {
+            ageValidationStatus = args.Status;
+            ageErrorMessage = args.ErrorText ?? string.Empty;
+            return;
+        }
+
+        ageValidationStatus = ValidationStatus.Success;
+        ageErrorMessage = string.Empty;
+    }
+
+    private void ValidateWebsite()
+    {
+        // Website is optional, so only validate if not empty
+        if (string.IsNullOrWhiteSpace(websiteValue))
+        {
+            websiteValidationStatus = ValidationStatus.Success;
+            websiteErrorMessage = string.Empty;
+            return;
+        }
+
+        var args = new ValidatorEventArgs(websiteValue);
+        ValidationRules.IsUrl.Validate(args, "Please enter a valid website URL.");
+        
+        websiteValidationStatus = args.Status;
+        websiteErrorMessage = args.Status == ValidationStatus.Error ? args.ErrorText ?? string.Empty : string.Empty;
+    }
+
+    private void ValidateAll()
+    {
+        ValidateEmail();
+        ValidateUsername();
+        ValidateAge();
+        ValidateWebsite();
+    }
+}
+
+<style>
+    .validation-rules-example {
+        max-width: 600px;
+        margin: 20px;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background-color: #f9f9f9;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+
+    .form-group input:focus {
+        outline: none;
+        border-color: #007bff;
+        box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+    }
+
+    .error-message {
+        color: #dc3545;
+        font-size: 12px;
+        margin-top: 5px;
+        font-weight: 500;
+    }
+
+    .success-message {
+        color: #28a745;
+        font-size: 12px;
+        margin-top: 5px;
+        font-weight: 500;
+    }
+
+    button {
+        background-color: #007bff;
+        color: white;
+        padding: 12px 24px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 500;
+    }
+
+    button:disabled {
+        background-color: #6c757d;
+        cursor: not-allowed;
+    }
+
+    button:hover:not(:disabled) {
+        background-color: #0056b3;
+    }
+
+    h3 {
+        color: #333;
+        margin-bottom: 10px;
+    }
+
+    p {
+        color: #666;
+        margin-bottom: 20px;
+        font-style: italic;
+    }
+</style>

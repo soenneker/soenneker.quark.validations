@@ -9,6 +9,8 @@ namespace Soenneker.Quark.Validations.Enums;
 public sealed partial class ValidationStatus
 {
     public static readonly ValidationStatus None = new(null);
+
     public static readonly ValidationStatus Success = new("success");
+
     public static readonly ValidationStatus Error = new("error");
 }

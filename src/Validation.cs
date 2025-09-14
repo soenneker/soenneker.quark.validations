@@ -7,13 +7,15 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
+using Soenneker.Extensions.String;
 using Soenneker.Quark.Validations.Abstract;
 using Soenneker.Quark.Validations.Dtos;
 using Soenneker.Quark.Validations.Enums;
 
 namespace Soenneker.Quark.Validations;
 
-public sealed partial class Validation : ComponentBase, IValidation, IDisposable
+///<inheritdoc cref="IValidation"/>
+public sealed partial class Validation : ComponentBase, IValidation
 {
     private IValidationInput? _input;
     private object? _lastKnownValue;
@@ -25,21 +27,43 @@ public sealed partial class Validation : ComponentBase, IValidation, IDisposable
     private bool _hasFieldIdentifier;
     private CancellationTokenSource? _cts;
 
-    [CascadingParameter] public Validations? ParentValidations { get; protected set; }
-    [CascadingParameter] public EditContext? EditContext { get; protected set; }
+    [CascadingParameter]
+    public Validations? ParentValidations { get; protected set; }
 
-    [Parameter] public ValidationStatus Status { get; set; }
-    [Parameter] public EventCallback<ValidationStatus> StatusChanged { get; set; }
-    [Parameter] public Action<ValidatorEventArgs>? Validator { get; set; }
-    [Parameter] public Func<ValidatorEventArgs, CancellationToken, Task>? AsyncValidator { get; set; }
-    [Parameter] public Func<string, IEnumerable<string>, string>? MessageLocalizer { get; set; }
-    [Parameter] public bool UsePattern { get; set; }
-    [Parameter] public string? PatternString { get; set; }
-    [Parameter] public Type? HandlerType { get; set; }
-    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [CascadingParameter]
+    public EditContext? EditContext { get; protected set; }
+
+    [Parameter]
+    public ValidationStatus Status { get; set; } = ValidationStatus.None;
+
+    [Parameter]
+    public EventCallback<ValidationStatus> StatusChanged { get; set; }
+
+    [Parameter]
+    public Action<ValidatorEventArgs>? Validator { get; set; }
+
+    [Parameter]
+    public Func<ValidatorEventArgs, CancellationToken, Task>? AsyncValidator { get; set; }
+
+    [Parameter]
+    public Func<string, IEnumerable<string>, string>? MessageLocalizer { get; set; }
+
+    [Parameter]
+    public bool UsePattern { get; set; }
+
+    [Parameter]
+    public string? PatternString { get; set; }
+
+    [Parameter]
+    public Type? HandlerType { get; set; }
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
 
     public IEnumerable<string>? Messages { get; private set; }
+
     public FieldIdentifier FieldIdentifier => _fieldIdentifier;
+
     public Regex? Pattern => _pattern;
 
     protected override Task OnInitializedAsync()
@@ -56,8 +80,8 @@ public sealed partial class Validation : ComponentBase, IValidation, IDisposable
     protected override async Task OnParametersSetAsync()
     {
         await base.OnParametersSetAsync();
-        
-        if (!string.IsNullOrEmpty(PatternString))
+
+        if (PatternString.HasContent())
         {
             await InitializeInputPattern(PatternString, string.Empty);
         }
@@ -80,7 +104,7 @@ public sealed partial class Validation : ComponentBase, IValidation, IDisposable
         _input = input;
         _lastKnownValue = input.ValidationValue;
 
-        if ((ParentValidations?.Mode ?? ValidationMode.Auto) == ValidationMode.Auto && (ParentValidations?.ValidateOnLoad ?? true))
+        if ((ParentValidations?.Mode ?? ValidationMode.Auto) == ValidationMode.Auto && (ParentValidations?.ValidateOnLoad ?? false))
         {
             await ValidateAsync(input.ValidationValue!);
         }
@@ -91,14 +115,16 @@ public sealed partial class Validation : ComponentBase, IValidation, IDisposable
     public async Task InitializeInputPattern<T>(string pattern, T value)
     {
         _lastKnownValue = value;
-        if (!string.IsNullOrEmpty(pattern))
+
+        if (pattern.HasContent())
         {
             if (!_hasPattern || _patternString != pattern)
             {
                 _patternString = pattern;
                 _pattern = new Regex(pattern);
 
-                if (_hasPattern && (ParentValidations?.Mode ?? ValidationMode.Auto) == ValidationMode.Auto && (ParentValidations?.ValidateOnLoad ?? true) && _initialized)
+                if (_hasPattern && (ParentValidations?.Mode ?? ValidationMode.Auto) == ValidationMode.Auto && (ParentValidations?.ValidateOnLoad ?? false) &&
+                    _initialized)
                 {
                     await NotifyInputChanged(value, true);
                 }
@@ -112,16 +138,18 @@ public sealed partial class Validation : ComponentBase, IValidation, IDisposable
     {
         if ((ParentValidations is not null || EditContext is not null) && expression is not null)
         {
-            if (!_hasFieldIdentifier
-                || (ParentValidations?.Model is not null && !ReferenceEquals(ParentValidations.Model, _fieldIdentifier.Model))
-                || (EditContext?.Model is not null && !ReferenceEquals(EditContext.Model, _fieldIdentifier.Model)))
+            if (!_hasFieldIdentifier || (ParentValidations?.Model is not null && !ReferenceEquals(ParentValidations.Model, _fieldIdentifier.Model)) ||
+                (EditContext?.Model is not null && !ReferenceEquals(EditContext.Model, _fieldIdentifier.Model)))
             {
                 _fieldIdentifier = FieldIdentifier.Create(expression);
-                _lastKnownValue = expression.Compile().Invoke();
+                _lastKnownValue = expression.Compile()
+                    .Invoke();
 
-                if (_hasFieldIdentifier && (ParentValidations?.Mode ?? ValidationMode.Auto) == ValidationMode.Auto && (ParentValidations?.ValidateOnLoad ?? true) && _initialized)
+                if (_hasFieldIdentifier && (ParentValidations?.Mode ?? ValidationMode.Auto) == ValidationMode.Auto &&
+                    (ParentValidations?.ValidateOnLoad ?? false) && _initialized)
                 {
-                    await NotifyInputChanged(expression.Compile().Invoke(), true);
+                    await NotifyInputChanged(expression.Compile()
+                        .Invoke(), true);
                 }
 
                 _hasFieldIdentifier = true;
@@ -183,8 +211,12 @@ public sealed partial class Validation : ComponentBase, IValidation, IDisposable
     {
         if (_input is not null && !_input.Disabled)
         {
-            _cts?.Cancel();
-            _cts?.Dispose();
+            if (_cts != null)
+            {
+                await _cts.CancelAsync();
+                _cts.Dispose();
+            }
+
             _cts = new CancellationTokenSource();
 
             CancellationToken token = _cts.Token;
@@ -218,12 +250,14 @@ public sealed partial class Validation : ComponentBase, IValidation, IDisposable
         {
             if (Validator is not null || AsyncValidator is not null)
                 return ValidationHandlerType.Validator;
-            else if (UsePattern && _hasPattern)
+
+            if (UsePattern && _hasPattern)
                 return ValidationHandlerType.Pattern;
-            else if (EditContext is not null && _hasFieldIdentifier)
+
+            if (EditContext is not null && _hasFieldIdentifier)
                 return ParentValidations?.HandlerType ?? ValidationHandlerType.DataAnnotation;
-            else
-                throw new NotImplementedException("Unable to determine the validator type.");
+
+            throw new NotImplementedException("Unable to determine the validator type.");
         }
 
         return HandlerType;
@@ -247,6 +281,7 @@ public sealed partial class Validation : ComponentBase, IValidation, IDisposable
             Messages = messages;
 
             ValidationStatusChanged?.Invoke(this, new ValidationStatusChangedEventArgs(status, messages));
+            InvokeAsync(StateHasChanged);
             InvokeAsync(() => StatusChanged.InvokeAsync(status));
             ParentValidations?.NotifyValidationStatusChanged(this);
         }

@@ -1,7 +1,8 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Soenneker.Extensions.String;
+using Soenneker.Quark.Validations.Abstract;
 using Soenneker.Quark.Validations.Dtos;
 using Soenneker.Quark.Validations.Enums;
 
@@ -11,45 +12,48 @@ internal sealed class ValidatorHandler : IValidationHandler
 {
     public void Validate(Validation ctx, object value)
     {
-        var messages = new List<string>();
-        var args = new ValidatorEventArgs
-        {
-            Value = value,
-            Failed = () => { },
-            Succeeded = () => { },
-            Messages = m => messages = m.ToList(),
-        };
+        var args = new ValidatorEventArgs(value);
 
         ctx.NotifyValidationStarted();
         ctx.Validator?.Invoke(args);
 
-        if (messages.Any())
+        if (args.Status == ValidationStatus.Error)
+        {
+            var messages = new List<string>();
+
+            if (args.ErrorText.HasContent())
+                messages.Add(args.ErrorText);
+
             ctx.NotifyValidationStatusChanged(ValidationStatus.Error, messages);
+        }
         else
-            ctx.NotifyValidationStatusChanged(ValidationStatus.Success);
+        {
+            ctx.NotifyValidationStatusChanged(args.Status);
+        }
     }
 
     public async Task<ValidationStatus> ValidateAsync(Validation ctx, object value, CancellationToken cancellationToken)
     {
-        var messages = new List<string>();
-        var args = new ValidatorEventArgs
-        {
-            Value = value,
-            Failed = () => { },
-            Succeeded = () => { },
-            Messages = m => messages = m.ToList(),
-        };
+        var args = new ValidatorEventArgs(value);
 
         ctx.NotifyValidationStarted();
+
         if (ctx.AsyncValidator is not null)
             await ctx.AsyncValidator.Invoke(args, cancellationToken);
         else
             ctx.Validator?.Invoke(args);
 
-        if (messages.Any())
+        if (args.Status == ValidationStatus.Error)
+        {
+            var messages = new List<string>();
+            if (!string.IsNullOrEmpty(args.ErrorText))
+                messages.Add(args.ErrorText);
             ctx.NotifyValidationStatusChanged(ValidationStatus.Error, messages);
+        }
         else
-            ctx.NotifyValidationStatusChanged(ValidationStatus.Success);
+        {
+            ctx.NotifyValidationStatusChanged(args.Status);
+        }
 
         return ctx.Status;
     }

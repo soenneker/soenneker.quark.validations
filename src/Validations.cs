@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Soenneker.Quark.Validations.Abstract;
+using Soenneker.Quark.Validations.Dtos;
 using Soenneker.Quark.Validations.Enums;
 
 namespace Soenneker.Quark.Validations;
@@ -19,7 +20,7 @@ public sealed partial class Validations : ComponentBase
     public ValidationMode Mode { get; set; } = ValidationMode.Auto;
 
     [Parameter]
-    public bool ValidateOnLoad { get; set; } = true;
+    public bool ValidateOnLoad { get; set; } = false;
 
     [Parameter]
     public EditContext? EditContext
@@ -53,7 +54,7 @@ public sealed partial class Validations : ComponentBase
     [Parameter]
     public RenderFragment? ChildContent { get; set; }
 
-    internal event Action<ValidationsStatusChangedEventArgs>? _StatusChanged;
+    internal event Action<ValidationsStatusChangedEventArgs>? _statusChanged;
 
     protected override void OnParametersSet()
     {
@@ -62,6 +63,16 @@ public sealed partial class Validations : ComponentBase
 
         if (Model is not null && !ReferenceEquals(Model, _editContext?.Model))
             _editContext = new EditContext(Model);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && ValidateOnLoad && Mode == ValidationMode.Auto)
+        {
+            await ValidateAll();
+        }
+
+        await base.OnAfterRenderAsync(firstRender);
     }
 
     public async Task<bool> ValidateAll()
@@ -134,7 +145,7 @@ public sealed partial class Validations : ComponentBase
     private void RaiseStatusChanged(ValidationStatus status, IReadOnlyCollection<string>? messages, IValidation? validation)
     {
         var args = new ValidationsStatusChangedEventArgs(status, messages, validation);
-        _StatusChanged?.Invoke(args);
+        _statusChanged?.Invoke(args);
         InvokeAsync(() => StatusChanged.InvokeAsync(args));
     }
 

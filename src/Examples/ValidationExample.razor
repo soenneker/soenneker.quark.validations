@@ -1,0 +1,143 @@
+@using Soenneker.Quark.Validations.Validators
+@using Soenneker.Quark.Validations.Enums
+
+<div class="validation-example">
+    <h3>Validation Example</h3>
+    
+    <div class="form-group">
+        <label for="email">Email Address:</label>
+        <input type="email" id="email" @bind="emailValue" @oninput="OnEmailInput" />
+        @if (emailValidationStatus == ValidationStatus.Error)
+        {
+            <div class="error-message">@emailErrorMessage</div>
+        }
+        else if (emailValidationStatus == ValidationStatus.Success)
+        {
+            <div class="success-message">Email is valid!</div>
+        }
+    </div>
+
+    <div class="form-group">
+        <label for="name">Name (Required, Min 3 chars):</label>
+        <input type="text" id="name" @bind="nameValue" @oninput="OnNameInput" />
+        @if (nameValidationStatus == ValidationStatus.Error)
+        {
+            <div class="error-message">@nameErrorMessage</div>
+        }
+        else if (nameValidationStatus == ValidationStatus.Success)
+        {
+            <div class="success-message">Name is valid!</div>
+        }
+    </div>
+
+    <div class="form-group">
+        <button @onclick="ValidateAll" disabled="@(emailValidationStatus != ValidationStatus.Success || nameValidationStatus != ValidationStatus.Success)">
+            Submit
+        </button>
+    </div>
+</div>
+
+@code {
+    private string emailValue = string.Empty;
+    private string nameValue = string.Empty;
+    private ValidationStatus emailValidationStatus = ValidationStatus.None;
+    private ValidationStatus nameValidationStatus = ValidationStatus.None;
+    private string emailErrorMessage = string.Empty;
+    private string nameErrorMessage = string.Empty;
+
+    private readonly EmailValidator emailValidator = new();
+    private readonly CompositeValidator nameValidator = new(
+        new RequiredValidator("Name is required."),
+        new MinLengthValidator(3, "Name must be at least 3 characters long.")
+    );
+
+    private void OnEmailInput(ChangeEventArgs e)
+    {
+        emailValue = e.Value?.ToString() ?? string.Empty;
+        ValidateEmail();
+    }
+
+    private void OnNameInput(ChangeEventArgs e)
+    {
+        nameValue = e.Value?.ToString() ?? string.Empty;
+        ValidateName();
+    }
+
+    private void ValidateEmail()
+    {
+        bool isValid = emailValidator.Validate(emailValue);
+        emailValidationStatus = isValid ? ValidationStatus.Success : ValidationStatus.Error;
+        emailErrorMessage = isValid ? string.Empty : emailValidator.ErrorMessage;
+    }
+
+    private void ValidateName()
+    {
+        var isValid = nameValidator.Validate(nameValue);
+        nameValidationStatus = isValid ? ValidationStatus.Success : ValidationStatus.Error;
+        
+        if (!isValid)
+        {
+            nameErrorMessage = string.Join(" ", nameValidator.GetErrorMessages(nameValue));
+        }
+        else
+        {
+            nameErrorMessage = string.Empty;
+        }
+    }
+
+    private void ValidateAll()
+    {
+        ValidateEmail();
+        ValidateName();
+    }
+}
+
+<style>
+    .validation-example {
+        max-width: 500px;
+        margin: 20px;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    .error-message {
+        color: red;
+        font-size: 12px;
+        margin-top: 5px;
+    }
+
+    .success-message {
+        color: green;
+        font-size: 12px;
+        margin-top: 5px;
+    }
+
+    button {
+        background-color: #007bff;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    button:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+    }
+</style>
