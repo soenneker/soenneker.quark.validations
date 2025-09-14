@@ -69,15 +69,16 @@ public sealed partial class Validations : ComponentBase
     {
         if (firstRender && ValidateOnLoad && Mode == ValidationMode.Auto)
         {
-            await ValidateAll();
+            await Validate();
         }
 
         await base.OnAfterRenderAsync(firstRender);
     }
 
-    public async Task<bool> ValidateAll()
+    public async Task<bool> Validate()
     {
-        bool result = await TryValidateAll();
+        bool result = await TryValidate();
+
         if (result)
         {
             RaiseStatusChanged(ValidationStatus.Success, null, null);
@@ -98,9 +99,10 @@ public sealed partial class Validations : ComponentBase
         return Task.CompletedTask;
     }
 
-    private async Task<bool> TryValidateAll()
+    private async Task<bool> TryValidate()
     {
         var validated = true;
+
         foreach (IValidation v in _validations)
         {
             if (await v.ValidateAsync() == ValidationStatus.Error)

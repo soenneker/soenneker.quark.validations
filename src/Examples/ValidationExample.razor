@@ -31,7 +31,7 @@
     </div>
 
     <div class="form-group">
-        <button @onclick="ValidateAll" disabled="@(emailValidationStatus != ValidationStatus.Success || nameValidationStatus != ValidationStatus.Success)">
+        <button @onclick="Validate" disabled="@(emailValidationStatus != ValidationStatus.Success || nameValidationStatus != ValidationStatus.Success)">
             Submit
         </button>
     </div>

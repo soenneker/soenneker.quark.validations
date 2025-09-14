@@ -287,7 +287,7 @@
     {
         if (_dataAnnotationForm is not null)
         {
-            bool result = await _dataAnnotationForm.ValidateAll();
+            bool result = await _dataAnnotationForm.Validate();
             StateHasChanged();
         }
     }
@@ -296,7 +296,7 @@
     {
         if (_patternForm is not null)
         {
-            bool result = await _patternForm.ValidateAll();
+            bool result = await _patternForm.Validate();
             StateHasChanged();
         }
     }
@@ -305,7 +305,7 @@
     {
         if (_customForm is not null)
         {
-            bool result = await _customForm.ValidateAll();
+            bool result = await _customForm.Validate();
             StateHasChanged();
         }
     }

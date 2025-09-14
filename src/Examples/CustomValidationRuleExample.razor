@@ -33,7 +33,7 @@
     </div>
 
     <div class="form-group">
-        <button @onclick="ValidateAll" disabled="@(phoneValidationStatus != ValidationStatus.Success || passwordValidationStatus != ValidationStatus.Success)">
+        <button @onclick="Validate" disabled="@(phoneValidationStatus != ValidationStatus.Success || passwordValidationStatus != ValidationStatus.Success)">
             Submit
         </button>
     </div>
@@ -83,7 +83,7 @@
         passwordErrorMessage = args.Status == ValidationStatus.Error ? args.ErrorText ?? string.Empty : string.Empty;
     }
 
-    private void ValidateAll()
+    private void Validate()
     {
         ValidatePhone();
         ValidatePassword();

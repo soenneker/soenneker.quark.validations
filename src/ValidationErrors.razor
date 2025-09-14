@@ -1,22 +1,12 @@
 @using Soenneker.Quark.Divs
-@using Soenneker.Quark.Validations.Enums
 @using Soenneker.Quark.Validations.Dtos
+@using Soenneker.Quark.Validations.Enums
 
 @implements IDisposable
 
-@* Prefer field-level messages if inside a single Validation; otherwise fall back to aggregate Validations messages *@
-@if (ParentValidation?.Status == ValidationStatus.Error && ParentValidation.Messages?.Any() == true)
+@if (_visible && _status == ValidationStatus.Error && (_messages?.Any() ?? false))
 {
-	<Div class="@($"alert alert-danger {Class}")">
-		@foreach (string message in ParentValidation.Messages)
-		{
-			<Div>@message</Div>
-		}
-	</Div>
-}
-else if (_visible && _status == ValidationStatus.Error && (_messages?.Any() ?? false))
-{
-	<Div class="@($"alert alert-danger {Class}")">
+	<Div class="@($"alert alert-danger {Class}")" >
 		@foreach (string message in _messages!)
 		{
 			<Div>@message</Div>
@@ -25,8 +15,6 @@ else if (_visible && _status == ValidationStatus.Error && (_messages?.Any() ?? f
 }
 
 @code {
-	[CascadingParameter]
-	public Validation? ParentValidation { get; set; }
 
 	[CascadingParameter]
 	public Validations? ParentValidations { get; set; }
@@ -71,4 +59,5 @@ else if (_visible && _status == ValidationStatus.Error && (_messages?.Any() ?? f
 			ParentValidations.ClearingAll -= OnClearingAll;
 		}
 	}
+
 }
