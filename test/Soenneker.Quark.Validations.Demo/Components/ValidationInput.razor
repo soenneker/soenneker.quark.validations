@@ -1,4 +1,5 @@
-@using Soenneker.Quark.Enums.Colors
+@using Soenneker.Quark.Components.Builders
+@using Soenneker.Quark.Components.Builders.Colors
 @using Soenneker.Quark.Enums.Size
 
 <input type="@Type"
@@ -43,8 +44,8 @@
 	[Parameter]
 	public string Type { get; set; } = "text";
 
-	[Parameter]
-	public Color Color { get; set; } = Color.Primary;
+    [Parameter]
+    public CssValue<ColorBuilder> Color { get; set; } = Quark.Components.Builders.Colors.Color.Primary;
 
 	[Parameter]
 	public Size Size { get; set; } = Size.Default;
@@ -75,9 +76,9 @@
 		var classes = "form-control";
 
 		// Add color class
-		if (Color != Color.Primary)
+		if (Color.IsCssClass)
 		{
-			classes += $" form-control-{Color.Value}";
+			classes += $" form-control-{Color}";
 		}
 
 		// Add size class
