@@ -1,0 +1,169 @@
+@using Soenneker.Quark.Validations.Demo.Components
+
+<div class="validation-action-demo">
+    <h3>ValidationAction Demo</h3>
+    <p>Shows how to use ValidationAction objects instead of Action delegates.</p>
+    
+    <div class="form-group">
+        <label>Email (using Action):</label>
+        <Validation @ref="_emailValidation" ValidationAction="@ValidateEmail">
+            <ValidationInput @bind-Value="_email" />
+        </Validation>
+        <ValidationError Validation="_emailValidation" />
+    </div>
+
+    <div class="form-group">
+        <label>Username (using Action with custom logic):</label>
+        <Validation @ref="_usernameValidation" ValidationAction="@ValidateUsername">
+            <ValidationInput @bind-Value="_username" />
+        </Validation>
+        <ValidationError Validation="_usernameValidation" />
+    </div>
+
+    <div class="form-group">
+        <label>Age (using Action with range check):</label>
+        <Validation @ref="_ageValidation" ValidationAction="@ValidateAge">
+            <ValidationInput @bind-Value="_age" />
+        </Validation>
+        <ValidationError Validation="_ageValidation" />
+    </div>
+
+    <button @onclick="ValidateAll" disabled="@(!IsValid)">
+        Submit
+    </button>
+</div>
+
+@code {
+    private string _email = "";
+    private string _username = "";
+    private string _age = "";
+    
+    private Validation? _emailValidation;
+    private Validation? _usernameValidation;
+    private Validation? _ageValidation;
+
+    // Validation Action methods
+    private void ValidateEmail(ValidatorEventArgs args)
+    {
+        var email = args.Value?.ToString();
+        if (string.IsNullOrWhiteSpace(email))
+        {
+            args.Status = ValidationStatus.Error;
+            args.ErrorText = "Email is required.";
+        }
+        else if (!email.Contains("@"))
+        {
+            args.Status = ValidationStatus.Error;
+            args.ErrorText = "Please enter a valid email address.";
+        }
+        else
+        {
+            args.Status = ValidationStatus.Success;
+        }
+    }
+
+    private void ValidateUsername(ValidatorEventArgs args)
+    {
+        var username = args.Value?.ToString();
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            args.Status = ValidationStatus.Error;
+            args.ErrorText = "Username is required.";
+        }
+        else if (username.Length < 3)
+        {
+            args.Status = ValidationStatus.Error;
+            args.ErrorText = "Username must be at least 3 characters long.";
+        }
+        else if (username.Length > 20)
+        {
+            args.Status = ValidationStatus.Error;
+            args.ErrorText = "Username must be no more than 20 characters long.";
+        }
+        else if (!username.All(char.IsLetterOrDigit))
+        {
+            args.Status = ValidationStatus.Error;
+            args.ErrorText = "Username can only contain letters and numbers.";
+        }
+        else
+        {
+            args.Status = ValidationStatus.Success;
+        }
+    }
+
+    private void ValidateAge(ValidatorEventArgs args)
+    {
+        var ageStr = args.Value?.ToString();
+        if (string.IsNullOrWhiteSpace(ageStr))
+        {
+            args.Status = ValidationStatus.Error;
+            args.ErrorText = "Age is required.";
+        }
+        else if (!int.TryParse(ageStr, out int age))
+        {
+            args.Status = ValidationStatus.Error;
+            args.ErrorText = "Please enter a valid age.";
+        }
+        else if (age < 18)
+        {
+            args.Status = ValidationStatus.Error;
+            args.ErrorText = "You must be at least 18 years old.";
+        }
+        else if (age > 120)
+        {
+            args.Status = ValidationStatus.Error;
+            args.ErrorText = "Please enter a realistic age.";
+        }
+        else
+        {
+            args.Status = ValidationStatus.Success;
+        }
+    }
+
+    private bool IsValid => 
+        _emailValidation?.Status == ValidationStatus.Success &&
+        _usernameValidation?.Status == ValidationStatus.Success &&
+        _ageValidation?.Status == ValidationStatus.Success;
+
+    private void ValidateAll()
+    {
+        _emailValidation?.Validate();
+        _usernameValidation?.Validate();
+        _ageValidation?.Validate();
+    }
+}
+
+<style>
+    .validation-action-demo {
+        max-width: 500px;
+        margin: 20px;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background: #f8f9fa;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+
+    button {
+        background: #007bff;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    button:disabled {
+        background: #6c757d;
+        cursor: not-allowed;
+    }
+</style>

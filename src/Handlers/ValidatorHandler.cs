@@ -12,7 +12,17 @@ internal sealed class ValidatorHandler : IValidationHandler
         var args = new ValidatorEventArgs(value);
 
         ctx.NotifyValidationStarted();
-        ctx.Validator?.Invoke(args);
+        
+        if (ctx.Validator is IValidator validator)
+        {
+            validator.Validate(value);
+            args.Status = validator.Status;
+            args.ErrorText = validator.Status == ValidationStatus.Error ? validator.ErrorMessage : null;
+        }
+        else if (ctx.ValidationAction is not null)
+        {
+            ctx.ValidationAction.Invoke(args);
+        }
 
         if (args.Status == ValidationStatus.Error)
         {
@@ -35,10 +45,20 @@ internal sealed class ValidatorHandler : IValidationHandler
 
         ctx.NotifyValidationStarted();
 
-        if (ctx.AsyncValidator is not null)
-            await ctx.AsyncValidator.Invoke(args, cancellationToken);
-        else
-            ctx.Validator?.Invoke(args);
+        if (ctx.AsyncValidationAction is not null)
+        {
+            await ctx.AsyncValidationAction.Invoke(args, cancellationToken);
+        }
+        else if (ctx.Validator is IValidator validator)
+        {
+            await validator.ValidateAsync(value, cancellationToken);
+            args.Status = validator.Status;
+            args.ErrorText = validator.Status == ValidationStatus.Error ? validator.ErrorMessage : null;
+        }
+        else if (ctx.ValidationAction is not null)
+        {
+            ctx.ValidationAction.Invoke(args);
+        }
 
         if (args.Status == ValidationStatus.Error)
         {

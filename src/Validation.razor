@@ -34,10 +34,13 @@
     public EventCallback<ValidationStatus> StatusChanged { get; set; }
 
     [Parameter]
-    public Action<ValidatorEventArgs>? Validator { get; set; }
+    public IValidator? Validator { get; set; }
 
     [Parameter]
-    public Func<ValidatorEventArgs, CancellationToken, Task>? AsyncValidator { get; set; }
+    public Action<ValidatorEventArgs>? ValidationAction { get; set; }
+
+    [Parameter]
+    public Func<ValidatorEventArgs, CancellationToken, Task>? AsyncValidationAction { get; set; }
 
     [Parameter]
     public Func<string, IEnumerable<string>, string>? MessageLocalizer { get; set; }
@@ -242,7 +245,7 @@
     {
         if (HandlerType is null)
         {
-            if (Validator is not null || AsyncValidator is not null)
+            if (Validator is not null || ValidationAction is not null || AsyncValidationAction is not null)
                 return ValidationHandlerType.Validator;
 
             if (UsePattern && _hasPattern)

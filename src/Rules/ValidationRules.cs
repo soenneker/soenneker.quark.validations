@@ -299,4 +299,46 @@ public static class ValidationRules
         public static bool IsValid(object? value, string? customMessage = null)
             => _digitsOnlyRule.IsValid(value, customMessage);
     }
+
+    // Simple static validators that can be used directly in markup
+    /// <summary>
+    /// Simple validation rules that can be used directly in markup.
+    /// </summary>
+    public static class Rules
+    {
+        /// <summary>
+        /// NotEmpty validation rule.
+        /// </summary>
+        public static readonly IValidator NotEmpty = new ValidationRuleAdapter(_notEmptyRule);
+
+        /// <summary>
+        /// IsEmail validation rule.
+        /// </summary>
+        public static readonly IValidator IsEmail = new ValidationRuleAdapter(_isEmailRule);
+
+        /// <summary>
+        /// IsUrl validation rule.
+        /// </summary>
+        public static readonly IValidator IsUrl = new ValidationRuleAdapter(_isUrlRule);
+
+        /// <summary>
+        /// IsNumeric validation rule.
+        /// </summary>
+        public static readonly IValidator IsNumeric = new ValidationRuleAdapter(_isNumericRule);
+
+        /// <summary>
+        /// IsInteger validation rule.
+        /// </summary>
+        public static readonly IValidator IsInteger = new ValidationRuleAdapter(_isIntegerRule);
+
+        /// <summary>
+        /// Alphanumeric validation rule.
+        /// </summary>
+        public static readonly IValidator Alphanumeric = new ValidationRuleAdapter(_alphanumericRule);
+
+        /// <summary>
+        /// DigitsOnly validation rule.
+        /// </summary>
+        public static readonly IValidator DigitsOnly = new ValidationRuleAdapter(_digitsOnlyRule);
+    }
 }

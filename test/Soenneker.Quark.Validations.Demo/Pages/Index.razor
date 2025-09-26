@@ -1,6 +1,7 @@
 @page "/"
 @using Soenneker.Quark.Validations.Demo.Components
 @using Soenneker.Extensions.String
+@using Soenneker.Quark.Validations.Demo.Examples
 
 <PageTitle>Quark Validations Demo</PageTitle>
 
@@ -151,7 +152,7 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label class="form-label">Username (must be unique)</label>
-                                    <Validation @ref="_usernameValidation" Validator="@ValidateUsername">
+                                    <Validation @ref="_usernameValidation" ValidationAction="@ValidateUsername">
                                         <ValidationInput @bind-Value="_customModel.Username" 
                                                        Placeholder="Enter username" />
                                     </Validation>
@@ -166,7 +167,7 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label class="form-label">Confirm Username</label>
-                                    <Validation @ref="_confirmUsernameValidation" Validator="@ValidateConfirmUsername">
+                                    <Validation @ref="_confirmUsernameValidation" ValidationAction="@ValidateConfirmUsername">
                                         <ValidationInput @bind-Value="_customModel.ConfirmUsername" 
                                                        Placeholder="Confirm username" />
                                     </Validation>
@@ -185,6 +186,36 @@
                             <button class="btn btn-secondary" @onclick="ClearCustom">Clear</button>
                         </div>
                     </ValidationContainer>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Direct Rule Usage Demo -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Direct Rule Usage</h5>
+                    <small class="text-muted">Uses validation rules directly in markup</small>
+                </div>
+                <div class="card-body">
+                    <DirectRuleUsageExample />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ValidationAction Demo -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">ValidationAction Demo</h5>
+                    <small class="text-muted">Uses ValidationAction objects instead of Action delegates</small>
+                </div>
+                <div class="card-body">
+                    <ValidationActionExample />
                 </div>
             </div>
         </div>
