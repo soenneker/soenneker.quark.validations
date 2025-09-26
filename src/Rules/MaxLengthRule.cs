@@ -1,4 +1,3 @@
-using Soenneker.Quark.Validations.Rules.Base;
 
 namespace Soenneker.Quark;
 

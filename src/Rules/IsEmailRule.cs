@@ -1,4 +1,3 @@
-using Soenneker.Quark.Validations.Rules.Base;
 using System.Text.RegularExpressions;
 
 namespace Soenneker.Quark;

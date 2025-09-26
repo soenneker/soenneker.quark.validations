@@ -2,10 +2,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Soenneker.Quark.Validations.Abstract;
-using Soenneker.Quark.Validations.Base;
 
-namespace Soenneker.Quark.Validations.Validators;
+namespace Soenneker.Quark;
 
 /// <summary>
 /// A composite validator that combines multiple validators.

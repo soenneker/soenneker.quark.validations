@@ -1,6 +1,5 @@
-using Soenneker.Quark.Validations.Dtos;
 
-namespace Soenneker.Quark.Validations.Rules;
+namespace Soenneker.Quark;
 
 /// <summary>
 /// Main validation rules class that provides access to all validation rules.

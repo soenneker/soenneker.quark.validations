@@ -1,6 +1,5 @@
-using Soenneker.Quark.Validations.Rules.Base;
 
-namespace Soenneker.Quark.Validations.Rules;
+namespace Soenneker.Quark;
 
 /// <summary>
 /// Validation rule for checking if a value is not empty.
