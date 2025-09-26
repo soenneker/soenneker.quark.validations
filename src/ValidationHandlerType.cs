@@ -1,7 +1,7 @@
 using Soenneker.Quark.Validations.Handlers;
 using System;
 
-namespace Soenneker.Quark.Validations;
+namespace Soenneker.Quark;
 
 public static class ValidationHandlerType
 {

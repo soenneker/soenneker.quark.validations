@@ -6,7 +6,7 @@ using Soenneker.Quark.Validations.Abstract;
 using Soenneker.Quark.Validations.Dtos;
 using Soenneker.Quark.Validations.Enums;
 
-namespace Soenneker.Quark.Validations.Handlers;
+namespace Soenneker.Quark;
 
 internal sealed class ValidatorHandler : IValidationHandler
 {

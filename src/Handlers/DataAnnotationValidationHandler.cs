@@ -7,7 +7,7 @@ using Soenneker.Quark.Validations.Abstract;
 using Soenneker.Quark.Validations.Enums;
 using ValidationResult = System.ComponentModel.DataAnnotations.ValidationResult;
 
-namespace Soenneker.Quark.Validations.Handlers;
+namespace Soenneker.Quark;
 
 internal sealed class DataAnnotationValidationHandler : IValidationHandler
 {

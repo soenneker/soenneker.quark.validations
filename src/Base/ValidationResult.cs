@@ -2,7 +2,7 @@ using System;
 using Microsoft.AspNetCore.Components;
 using Soenneker.Quark.Validations.Dtos;
 
-namespace Soenneker.Quark.Validations.Base;
+namespace Soenneker.Quark;
 
 /// <summary>
 /// Base class for validation result messages.

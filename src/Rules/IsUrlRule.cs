@@ -2,7 +2,7 @@ using Soenneker.Quark.Validations.Rules.Base;
 using System;
 using System.Text.RegularExpressions;
 
-namespace Soenneker.Quark.Validations.Rules;
+namespace Soenneker.Quark;
 
 /// <summary>
 /// Validation rule for checking URL format.

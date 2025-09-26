@@ -2,7 +2,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Soenneker.Quark.Validations.Enums;
 
-namespace Soenneker.Quark.Validations.Abstract;
+namespace Soenneker.Quark;
 
 /// <summary>
 /// Interface for custom validators that can be used with Quark validation components.

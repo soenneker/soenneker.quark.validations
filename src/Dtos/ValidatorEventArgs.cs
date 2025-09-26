@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Soenneker.Quark.Validations.Enums;
 
-namespace Soenneker.Quark.Validations.Dtos;
+namespace Soenneker.Quark;
 
 /// <summary>
 /// Provides data for the validation events.

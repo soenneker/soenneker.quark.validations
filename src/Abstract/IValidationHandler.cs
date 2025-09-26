@@ -2,7 +2,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Soenneker.Quark.Validations.Enums;
 
-namespace Soenneker.Quark.Validations.Abstract;
+namespace Soenneker.Quark;
 
 /// <summary>
 /// Strategy that executes validation against a <see cref="Validation"/> context.

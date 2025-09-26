@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Soenneker.Quark.Validations.Dtos;
 using Soenneker.Quark.Validations.Enums;
 
-namespace Soenneker.Quark.Validations.Rules.Base;
+namespace Soenneker.Quark;
 
 /// <summary>
 /// Base class for all validation rules.

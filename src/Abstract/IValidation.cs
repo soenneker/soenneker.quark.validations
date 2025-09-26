@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace Soenneker.Quark.Validations.Abstract;
+namespace Soenneker.Quark;
 
 /// <summary>
 /// Represents a single validation unit that tracks status, messages, and connects an input to a handler.

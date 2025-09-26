@@ -1,6 +1,6 @@
 using Soenneker.Quark.Validations.Base;
 
-namespace Soenneker.Quark.Validations.Validators;
+namespace Soenneker.Quark;
 
 /// <summary>
 /// Validator for maximum length requirements.

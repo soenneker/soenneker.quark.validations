@@ -2,7 +2,7 @@ using System;
 using Soenneker.Quark.Validations.Abstract;
 using Soenneker.Quark.Validations.Handlers;
 
-namespace Soenneker.Quark.Validations;
+namespace Soenneker.Quark;
 
 internal static class ValidationHandlerFactory
 {

@@ -1,7 +1,7 @@
 using System.Text.RegularExpressions;
 using Soenneker.Quark.Validations.Base;
 
-namespace Soenneker.Quark.Validations.Validators;
+namespace Soenneker.Quark;
 
 /// <summary>
 /// Validator for email addresses.

@@ -1,6 +1,6 @@
 using Intellenum;
 
-namespace Soenneker.Quark.Validations.Enums;
+namespace Soenneker.Quark;
 
 /// <summary>
 /// An enumeration for Quark, representing validation mode.

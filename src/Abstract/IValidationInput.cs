@@ -1,4 +1,4 @@
-namespace Soenneker.Quark.Validations.Abstract;
+namespace Soenneker.Quark;
 
 /// <summary>
 /// Abstraction for input components that can participate in a validation.

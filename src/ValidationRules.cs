@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 using Soenneker.Quark.Validations.Dtos;
 using Soenneker.Quark.Validations.Enums;
 
-namespace Soenneker.Quark.Validations;
+namespace Soenneker.Quark;
 
 /// <summary>
 /// Predefined set of validation functions (legacy compatibility).

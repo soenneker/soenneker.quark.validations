@@ -1,6 +1,6 @@
 using System;
 
-namespace Soenneker.Quark.Validations.Abstract;
+namespace Soenneker.Quark;
 
 /// <summary>
 /// Factory for constructing concrete validation handlers by type.
