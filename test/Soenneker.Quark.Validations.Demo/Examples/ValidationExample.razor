@@ -1,6 +1,3 @@
-@using Soenneker.Quark.Validations.Validators
-@using Soenneker.Quark.Validations.Enums
-
 <div class="validation-example">
     <h3>Validation Example</h3>
     
@@ -31,9 +28,9 @@
     </div>
 
     <div class="form-group">
-        <button @onclick="Validate" disabled="@(emailValidationStatus != ValidationStatus.Success || nameValidationStatus != ValidationStatus.Success)">
+@*         <button @onclick="Validate" disabled="@(emailValidationStatus != ValidationStatus.Success || nameValidationStatus != ValidationStatus.Success)">
             Submit
-        </button>
+        </button> *@
     </div>
 </div>
 

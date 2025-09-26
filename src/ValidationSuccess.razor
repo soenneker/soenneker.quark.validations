@@ -1,8 +1,4 @@
-@using Soenneker.Quark.Divs
-@using Soenneker.Quark.Validations.Dtos
-@using Soenneker.Quark.Validations.Enums
-
-@implements IDisposable
+@inherits Element
 
 @if (_visible && _status == ValidationStatus.Success)
 {
@@ -19,20 +15,22 @@
 }
 
 @code {
+    public override string? Name { get; set; } = "ValidationSuccess";
+
     [CascadingParameter]
-    public Validations? ParentValidations { get; set; }
+    public ValidationContainer? ParentValidations { get; set; }
 
     [Parameter]
-    public RenderFragment? ChildContent { get; set; }
+    public new RenderFragment? ChildContent { get; set; }
 
     [Parameter]
     public string? SuccessText { get; set; }
 
     [Parameter]
-    public string? Class { get; set; }
+    public new string? Class { get; set; }
 
     private bool _visible;
-    private ValidationStatus _status;
+    private ValidationStatus _status = ValidationStatus.None;
 
     protected override void OnInitialized()
     {
@@ -57,7 +55,7 @@
         InvokeAsync(StateHasChanged);
     }
 
-    public void Dispose()
+    public override void Dispose()
     {
         if (ParentValidations is not null)
         {

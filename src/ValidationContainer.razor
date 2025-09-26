@@ -1,17 +1,14 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Forms;
+@using Microsoft.AspNetCore.Components.Forms
+@inherits ComponentBase
 
-namespace Soenneker.Quark;
+<CascadingValue Value="@this" IsFixed>
+    <CascadingValue Value="@EditContext">
+        @ChildContent
+    </CascadingValue>
+</CascadingValue>
 
-public sealed partial class Validations : ComponentBase
-{
+@code {
     private readonly List<IValidation> _validations = [];
-    private EditContext? _editContext;
-    private bool _hasSetEditContextExplicitly;
 
     [Parameter]
     public ValidationMode Mode { get; set; } = ValidationMode.Auto;
@@ -20,15 +17,7 @@ public sealed partial class Validations : ComponentBase
     public bool ValidateOnLoad { get; set; } = false;
 
     [Parameter]
-    public EditContext? EditContext
-    {
-        get => _editContext;
-        set
-        {
-            _editContext = value;
-            _hasSetEditContextExplicitly = value is not null;
-        }
-    }
+    public EditContext? EditContext { get; set; }
 
     [Parameter]
     public object? Model { get; set; }
@@ -55,11 +44,14 @@ public sealed partial class Validations : ComponentBase
 
     protected override void OnParametersSet()
     {
-        if (_hasSetEditContextExplicitly && Model is not null)
+        // Check if EditContext was explicitly set by checking if it's not null and different from what we would create from Model
+        bool editContextExplicitlySet = EditContext is not null && (Model is null || !ReferenceEquals(Model, EditContext.Model));
+        
+        if (editContextExplicitlySet && Model is not null)
             throw new InvalidOperationException("Validations requires a Model parameter, or an EditContext parameter, but not both.");
 
-        if (Model is not null && !ReferenceEquals(Model, _editContext?.Model))
-            _editContext = new EditContext(Model);
+        if (Model is not null && !ReferenceEquals(Model, EditContext?.Model))
+            EditContext = new EditContext(Model);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

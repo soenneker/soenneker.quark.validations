@@ -1,6 +1,5 @@
 @page "/"
 @using Soenneker.Quark.Validations.Demo.Components
-@using Soenneker.Quark.Validations.Dtos
 @using Soenneker.Extensions.String
 
 <PageTitle>Quark Validations Demo</PageTitle>
@@ -22,7 +21,7 @@
                     <small class="text-muted">Uses System.ComponentModel.DataAnnotations</small>
                 </div>
                 <div class="card-body">
-                    <Validations @ref="_dataAnnotationForm" Model="_dataAnnotationModel">
+                    <ValidationContainer @ref="_dataAnnotationForm" Model="_dataAnnotationModel">
                         <div class="mb-3">
                             <label class="form-label">Email Address *</label>
                             <Validation @ref="_emailValidation">
@@ -71,7 +70,7 @@
                             <button class="btn btn-primary" @onclick="ValidateDataAnnotations">Validate All</button>
                             <button class="btn btn-secondary" @onclick="ClearDataAnnotations">Clear</button>
                         </div>
-                    </Validations>
+                    </ValidationContainer>
                 </div>
             </div>
         </div>
@@ -84,7 +83,7 @@
                     <small class="text-muted">Uses Regular Expression patterns</small>
                 </div>
                 <div class="card-body">
-                    <Validations @ref="_patternForm">
+                    <ValidationContainer @ref="_patternForm">
                         <div class="mb-3">
                             <label class="form-label">Password (min 8 chars, 1 uppercase, 1 lowercase, 1 number)</label>
                             <Validation @ref="_passwordValidation" UsePattern="true">
@@ -132,7 +131,7 @@
                             <button class="btn btn-primary" @onclick="ValidatePatterns">Validate All</button>
                             <button class="btn btn-secondary" @onclick="ClearPatterns">Clear</button>
                         </div>
-                    </Validations>
+                    </ValidationContainer>
                 </div>
             </div>
         </div>
@@ -147,7 +146,7 @@
                     <small class="text-muted">Uses custom validation logic</small>
                 </div>
                 <div class="card-body">
-                    <Validations @ref="_customForm">
+                    <ValidationContainer @ref="_customForm">
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
@@ -185,7 +184,7 @@
                             <button class="btn btn-primary" @onclick="ValidateCustom">Validate All</button>
                             <button class="btn btn-secondary" @onclick="ClearCustom">Clear</button>
                         </div>
-                    </Validations>
+                    </ValidationContainer>
                 </div>
             </div>
         </div>
@@ -227,9 +226,9 @@
 
 @code {
     // Form references
-    private Validations? _dataAnnotationForm;
-    private Validations? _patternForm;
-    private Validations? _customForm;
+    private ValidationContainer? _dataAnnotationForm;
+    private ValidationContainer? _patternForm;
+    private ValidationContainer? _customForm;
 
     // Validation references
     private Validation? _emailValidation;

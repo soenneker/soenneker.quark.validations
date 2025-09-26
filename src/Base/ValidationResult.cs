@@ -6,7 +6,7 @@ namespace Soenneker.Quark;
 /// <summary>
 /// Base class for validation result messages.
 /// </summary>
-public abstract class ValidationResult : ComponentBase, IDisposable
+public abstract class ValidationResultComponent : ComponentBase, IDisposable
 {
     private Validation? _previousParentValidation;
 

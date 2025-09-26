@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components.Forms;
-using ValidationResult = System.ComponentModel.DataAnnotations.ValidationResult;
 
 namespace Soenneker.Quark;
 
@@ -18,7 +17,7 @@ internal sealed class DataAnnotationValidationHandler : IValidationHandler
             FieldIdentifier field = ctx.FieldIdentifier;
             store.Clear(field);
 
-            var results = new List<ValidationResult>();
+            var results = new List<System.ComponentModel.DataAnnotations.ValidationResult>();
             var validationContext = new System.ComponentModel.DataAnnotations.ValidationContext(field.Model)
             {
                 MemberName = field.FieldName
@@ -30,7 +29,7 @@ internal sealed class DataAnnotationValidationHandler : IValidationHandler
                 validationContext,
                 results);
 
-            foreach (ValidationResult r in results)
+            foreach (System.ComponentModel.DataAnnotations.ValidationResult r in results)
             {
                 string message = r.ErrorMessage ?? "Invalid";
                 messages.Add(message);

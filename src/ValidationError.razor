@@ -1,8 +1,4 @@
-@using Soenneker.Quark.Divs
-@using Soenneker.Quark.Validations.Enums
-@using Soenneker.Quark.Validations.Dtos
-
-@implements IDisposable
+@inherits Element
 
 @* Prefer field-level messages if inside a single Validation; otherwise fall back to aggregate Validations messages *@
 @if (ParentValidation?.Status == ValidationStatus.Error && ParentValidation.Messages?.Any() == true)
@@ -25,17 +21,16 @@ else if (_visible && _status == ValidationStatus.Error && (_messages?.Any() ?? f
 }
 
 @code {
+    public override string? Name { get; set; } = "ValidationError";
+
 	[CascadingParameter]
 	public Validation? ParentValidation { get; set; }
 
 	[CascadingParameter]
-	public Validations? ParentValidations { get; set; }
-
-	[Parameter]
-	public string? Class { get; set; }
+	public ValidationContainer? ParentValidations { get; set; }
 
 	private bool _visible;
-	private ValidationStatus _status;
+	private ValidationStatus _status = ValidationStatus.None;
 	private IReadOnlyCollection<string>? _messages;
 
 	protected override void OnInitialized()
@@ -63,12 +58,14 @@ else if (_visible && _status == ValidationStatus.Error && (_messages?.Any() ?? f
 		InvokeAsync(StateHasChanged);
 	}
 
-	public void Dispose()
-	{
-		if (ParentValidations is not null)
-		{
-			ParentValidations._statusChanged -= OnStatusChanged;
-			ParentValidations.ClearingAll -= OnClearingAll;
-		}
-	}
+    public override void Dispose()
+    {
+        base.Dispose();
+
+        if (ParentValidations is not null)
+        {
+            ParentValidations._statusChanged -= OnStatusChanged;
+            ParentValidations.ClearingAll -= OnClearingAll;
+        }
+    }
 }

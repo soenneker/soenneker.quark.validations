@@ -1,6 +1,6 @@
-@using Soenneker.Quark.Components.Builders
-@using Soenneker.Quark.Components.Builders.Colors
-@using Soenneker.Quark.Enums.Size
+@using Soenneker.Quark.Enums
+
+@implements IValidationInput
 
 <input type="@Type"
        @bind="Value"
@@ -12,8 +12,6 @@
        required="@Required"
        maxlength="@(MaxLength > 0 ? MaxLength : null)"
        class="@GetInputClass()" />
-
-@implements IValidationInput
 
 @code {
 
@@ -44,8 +42,8 @@
 	[Parameter]
 	public string Type { get; set; } = "text";
 
-    [Parameter]
-    public CssValue<ColorBuilder> Color { get; set; } = Quark.Components.Builders.Colors.Color.Primary;
+	[Parameter]
+	public CssValue<ColorBuilder> Color { get; set; } = Quark.Color.Primary;
 
 	[Parameter]
 	public Size Size { get; set; } = Size.Default;
