@@ -46,7 +46,7 @@
 	public CssValue<ColorBuilder> Color { get; set; } = Quark.Color.Primary;
 
 	[Parameter]
-	public CssValue<SizeBuilder>? Size { get; set; } = Size.Default;
+	public CssValue<SizeBuilder>? Size { get; set; } = Quark.Size.Default;
 
 	public object? ValidationValue => Value;
 
@@ -80,7 +80,7 @@
 		}
 
 		// Add size class
-		if (Size != Size.Default)
+		if (Size != Quark.Size.Default)
 		{
 			classes += $" form-control-{Size.Value}";
 		}
