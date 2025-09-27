@@ -8,7 +8,7 @@ namespace Soenneker.Quark;
 /// Adapter class that wraps a BaseValidationRule to implement IValidator interface.
 /// This allows validation rules to be used directly as validators in markup.
 /// </summary>
-public class ValidationRuleAdapter : IValidator
+public class ValidationRuleAdapter : IQuarkValidator
 {
     private readonly BaseValidationRule _rule;
     private readonly string? _customMessage;

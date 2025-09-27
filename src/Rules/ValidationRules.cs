@@ -309,36 +309,36 @@ public static class ValidationRules
         /// <summary>
         /// NotEmpty validation rule.
         /// </summary>
-        public static readonly IValidator NotEmpty = new ValidationRuleAdapter(_notEmptyRule);
+        public static readonly IQuarkValidator NotEmpty = new ValidationRuleAdapter(_notEmptyRule);
 
         /// <summary>
         /// IsEmail validation rule.
         /// </summary>
-        public static readonly IValidator IsEmail = new ValidationRuleAdapter(_isEmailRule);
+        public static readonly IQuarkValidator IsEmail = new ValidationRuleAdapter(_isEmailRule);
 
         /// <summary>
         /// IsUrl validation rule.
         /// </summary>
-        public static readonly IValidator IsUrl = new ValidationRuleAdapter(_isUrlRule);
+        public static readonly IQuarkValidator IsUrl = new ValidationRuleAdapter(_isUrlRule);
 
         /// <summary>
         /// IsNumeric validation rule.
         /// </summary>
-        public static readonly IValidator IsNumeric = new ValidationRuleAdapter(_isNumericRule);
+        public static readonly IQuarkValidator IsNumeric = new ValidationRuleAdapter(_isNumericRule);
 
         /// <summary>
         /// IsInteger validation rule.
         /// </summary>
-        public static readonly IValidator IsInteger = new ValidationRuleAdapter(_isIntegerRule);
+        public static readonly IQuarkValidator IsInteger = new ValidationRuleAdapter(_isIntegerRule);
 
         /// <summary>
         /// Alphanumeric validation rule.
         /// </summary>
-        public static readonly IValidator Alphanumeric = new ValidationRuleAdapter(_alphanumericRule);
+        public static readonly IQuarkValidator Alphanumeric = new ValidationRuleAdapter(_alphanumericRule);
 
         /// <summary>
         /// DigitsOnly validation rule.
         /// </summary>
-        public static readonly IValidator DigitsOnly = new ValidationRuleAdapter(_digitsOnlyRule);
+        public static readonly IQuarkValidator DigitsOnly = new ValidationRuleAdapter(_digitsOnlyRule);
     }
 }

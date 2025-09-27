@@ -13,7 +13,7 @@ internal sealed class ValidatorHandler : IValidationHandler
 
         ctx.NotifyValidationStarted();
         
-        if (ctx.Validator is IValidator validator)
+        if (ctx.Validator is IQuarkValidator validator)
         {
             validator.Validate(value);
             args.Status = validator.Status;
@@ -49,7 +49,7 @@ internal sealed class ValidatorHandler : IValidationHandler
         {
             await ctx.AsyncValidationAction.Invoke(args, cancellationToken);
         }
-        else if (ctx.Validator is IValidator validator)
+        else if (ctx.Validator is IQuarkValidator validator)
         {
             await validator.ValidateAsync(value, cancellationToken);
             args.Status = validator.Status;

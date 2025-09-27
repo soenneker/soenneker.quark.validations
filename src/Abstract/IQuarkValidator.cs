@@ -6,7 +6,7 @@ namespace Soenneker.Quark;
 /// <summary>
 /// Interface for custom validators that can be used with Quark validation components.
 /// </summary>
-public interface IValidator
+public interface IQuarkValidator
 {
     /// <summary>
     /// Validates the given value synchronously.

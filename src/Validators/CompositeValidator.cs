@@ -8,15 +8,15 @@ namespace Soenneker.Quark;
 /// <summary>
 /// A composite validator that combines multiple validators.
 /// </summary>
-public class CompositeValidator : BaseValidator
+public class CompositeValidator : BaseQuarkValidator
 {
-    private readonly List<IValidator> _validators;
+    private readonly List<IQuarkValidator> _validators;
 
     /// <summary>
     /// Initializes a new instance of the CompositeValidator class.
     /// </summary>
     /// <param name="validators">The validators to combine.</param>
-    public CompositeValidator(params IValidator[] validators)
+    public CompositeValidator(params IQuarkValidator[] validators)
     {
         _validators = validators?.ToList() ?? [];
 
@@ -28,9 +28,9 @@ public class CompositeValidator : BaseValidator
     /// </summary>
     /// <param name="errorMessage">The error message to display when validation fails.</param>
     /// <param name="validators">The validators to combine.</param>
-    public CompositeValidator(string errorMessage, params IValidator[] validators)
+    public CompositeValidator(string errorMessage, params IQuarkValidator[] validators)
     {
-        _validators = validators?.ToList() ?? new List<IValidator>();
+        _validators = validators?.ToList() ?? new List<IQuarkValidator>();
         ErrorMessage = errorMessage;
     }
 
@@ -38,7 +38,7 @@ public class CompositeValidator : BaseValidator
     /// Adds a validator to the composite.
     /// </summary>
     /// <param name="validator">The validator to add.</param>
-    public void AddValidator(IValidator validator)
+    public void AddValidator(IQuarkValidator validator)
     {
         if (validator != null)
         {
@@ -50,7 +50,7 @@ public class CompositeValidator : BaseValidator
     /// Removes a validator from the composite.
     /// </summary>
     /// <param name="validator">The validator to remove.</param>
-    public void RemoveValidator(IValidator validator)
+    public void RemoveValidator(IQuarkValidator validator)
     {
         _validators.Remove(validator);
     }

@@ -1,10 +1,9 @@
-
 namespace Soenneker.Quark;
 
 /// <summary>
 /// Validator for maximum length requirements.
 /// </summary>
-public class MaxLengthValidator : BaseValidator
+public class MaxLengthValidator : BaseQuarkValidator
 {
     private readonly int _maxLength;
 

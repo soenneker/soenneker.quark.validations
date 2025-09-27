@@ -34,7 +34,7 @@
     public EventCallback<ValidationStatus> StatusChanged { get; set; }
 
     [Parameter]
-    public IValidator? Validator { get; set; }
+    public IQuarkValidator? Validator { get; set; }
 
     [Parameter]
     public Action<ValidatorEventArgs>? ValidationAction { get; set; }

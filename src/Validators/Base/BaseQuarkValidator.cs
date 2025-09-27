@@ -6,7 +6,7 @@ namespace Soenneker.Quark;
 /// <summary>
 /// Base implementation of IValidator that provides common validation functionality.
 /// </summary>
-public abstract class BaseValidator : IValidator
+public abstract class BaseQuarkValidator : IQuarkValidator
 {
     private ValidationStatus _status = ValidationStatus.None;
 

@@ -1,10 +1,9 @@
-
 namespace Soenneker.Quark;
 
 /// <summary>
 /// Validator for required fields.
 /// </summary>
-public class RequiredValidator : BaseValidator
+public class RequiredValidator : BaseQuarkValidator
 {
     /// <summary>
     /// Initializes a new instance of the RequiredValidator class.
