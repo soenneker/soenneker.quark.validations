@@ -27,7 +27,7 @@ else if (_visible && _status == ValidationStatus.Error && (_messages?.Any() ?? f
 	public Validation? ParentValidation { get; set; }
 
 	[CascadingParameter]
-	public ValidationContainer? ParentValidations { get; set; }
+	public ValidationsContainer? ParentValidations { get; set; }
 
 	private bool _visible;
 	private ValidationStatus _status = ValidationStatus.None;

@@ -18,7 +18,7 @@
     public override string? Name { get; set; } = "ValidationSuccess";
 
     [CascadingParameter]
-    public ValidationContainer? ParentValidations { get; set; }
+    public ValidationsContainer? ParentValidations { get; set; }
 
     [Parameter]
     public new RenderFragment? ChildContent { get; set; }

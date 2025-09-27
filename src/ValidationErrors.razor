@@ -14,7 +14,7 @@
     public override string? Name { get; set; } = "ValidationErrors";
 
     [CascadingParameter]
-    public ValidationContainer? ParentValidations { get; set; }
+    public ValidationsContainer? ParentValidations { get; set; }
 
     private bool _visible;
     private ValidationStatus _status = ValidationStatus.None;

@@ -22,7 +22,7 @@
                     <small class="text-muted">Uses System.ComponentModel.DataAnnotations</small>
                 </div>
                 <div class="card-body">
-                    <ValidationContainer @ref="_dataAnnotationForm" Model="_dataAnnotationModel">
+                    <ValidationsContainer @ref="_dataAnnotationForm" Model="_dataAnnotationModel">
                         <div class="mb-3">
                             <label class="form-label">Email Address *</label>
                             <Validation @ref="_emailValidation">
@@ -71,7 +71,7 @@
                             <button class="btn btn-primary" @onclick="ValidateDataAnnotations">Validate All</button>
                             <button class="btn btn-secondary" @onclick="ClearDataAnnotations">Clear</button>
                         </div>
-                    </ValidationContainer>
+                    </ValidationsContainer>
                 </div>
             </div>
         </div>
@@ -84,7 +84,7 @@
                     <small class="text-muted">Uses Regular Expression patterns</small>
                 </div>
                 <div class="card-body">
-                    <ValidationContainer @ref="_patternForm">
+                    <ValidationsContainer @ref="_patternForm">
                         <div class="mb-3">
                             <label class="form-label">Password (min 8 chars, 1 uppercase, 1 lowercase, 1 number)</label>
                             <Validation @ref="_passwordValidation" UsePattern="true">
@@ -132,7 +132,7 @@
                             <button class="btn btn-primary" @onclick="ValidatePatterns">Validate All</button>
                             <button class="btn btn-secondary" @onclick="ClearPatterns">Clear</button>
                         </div>
-                    </ValidationContainer>
+                    </ValidationsContainer>
                 </div>
             </div>
         </div>
@@ -147,7 +147,7 @@
                     <small class="text-muted">Uses custom validation logic</small>
                 </div>
                 <div class="card-body">
-                    <ValidationContainer @ref="_customForm">
+                    <ValidationsContainer @ref="_customForm">
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
@@ -185,7 +185,7 @@
                             <button class="btn btn-primary" @onclick="ValidateCustom">Validate All</button>
                             <button class="btn btn-secondary" @onclick="ClearCustom">Clear</button>
                         </div>
-                    </ValidationContainer>
+                    </ValidationsContainer>
                 </div>
             </div>
         </div>
@@ -257,9 +257,9 @@
 
 @code {
     // Form references
-    private ValidationContainer? _dataAnnotationForm;
-    private ValidationContainer? _patternForm;
-    private ValidationContainer? _customForm;
+    private ValidationsContainer? _dataAnnotationForm;
+    private ValidationsContainer? _patternForm;
+    private ValidationsContainer? _customForm;
 
     // Validation references
     private Validation? _emailValidation;
